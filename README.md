@@ -26,6 +26,12 @@ Zero-knowledge photo and note vault for iOS with military-grade encryption.
 ✓ Physical theft, forensic recovery, unauthorized access, forced unlock, extended seizure  
 ✗ Jailbroken devices, iOS zero-days, weak passwords
 
+## Documentation
+
+- [ENCRYPTION.md](./ENCRYPTION.md) - Encryption implementation details
+- [DOD_WIPE.md](./DOD_WIPE.md) - Secure deletion process
+- [SKELETON_SWITCH.md](./SKELETON_SWITCH.md) - Auto-wipe system
+
 ## Standards
 
 - ChaCha20-Poly1305: IETF RFC 8439
