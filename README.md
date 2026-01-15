@@ -1,6 +1,6 @@
 # Nu11VLT
 
-Zero-knowledge photo and note vault for iOS with military-grade encryption.
+Zero-knowledge photo and note vault for iOS with ChaCha20-Poly1305 encryption.
 
 🌐 [dro1d.org/nu11vlt.html](https://dro1d.org/nu11vlt.html) | 📄 [Technical Specs](https://dro1d.org/nu11vlt-tech.html)
 
@@ -26,23 +26,37 @@ Zero-knowledge photo and note vault for iOS with military-grade encryption.
 ✓ Physical theft, forensic recovery, unauthorized access, forced unlock, extended seizure  
 ✗ Jailbroken devices, iOS zero-days, weak passwords
 
+See [THREAT_MODEL.md](./THREAT_MODEL.md) for detailed analysis.
+
 ## Documentation
 
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - System architecture and data flow
 - [ENCRYPTION.md](./ENCRYPTION.md) - Encryption implementation details
 - [SECURE_WIPE.md](./SECURE_WIPE.md) - Secure wipe process
 - [SKELETON_SWITCH.md](./SKELETON_SWITCH.md) - Auto-wipe system
+- [BACKUP_PIN.md](./BACKUP_PIN.md) - Plausible deniability feature
+- [THREAT_MODEL.md](./THREAT_MODEL.md) - Complete threat assessment
+- [COMPARISONS.md](./COMPARISONS.md) - Nu11VLT vs alternatives
+- [FAQ.md](./FAQ.md) - Frequently asked questions
 
 ## Standards
 
 - ChaCha20-Poly1305: IETF RFC 8439
 - AES-256-GCM: NIST FIPS 197
 - Argon2id: RFC 9106
-- Secure Wipe: **NIST SP 800-88 Rev. 1**
+- Secure Wipe: NIST SP 800-88 Rev. 1
 
 ## Requirements
 
 iOS 18.0+
 
+## Pricing
+
+- **Free:** 30 vault photos, 10 fade photos, 2 albums, 5 notes
+- **Pro:** $5.99/month or $69.99 lifetime (unlimited storage, all features)
+
 ## License
 
 Copyright © 2025-2026. All rights reserved.
+
+This repository contains documentation only. Source code is proprietary.
