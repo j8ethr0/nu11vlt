@@ -13,7 +13,7 @@ This repository contains documentation for **Nu11VLT**, a proprietary iOS applic
 
 ## Documentation
 
-The documentation provided in this repository (README.md, ENCRYPTION.md, SECURE_DELETION.md, SKELETON_SWITCH.md) is made available for educational and informational purposes to help users understand the security features and architecture of Nu11VLT.
+The documentation provided in this repository (README.md, ENCRYPTION.md, SECURE_WIPE.md, SKELETON_SWITCH.md) is made available for educational and informational purposes to help users understand the security features and architecture of Nu11VLT.
 
 ## Contact
 

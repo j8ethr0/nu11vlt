@@ -5,8 +5,7 @@ Auto-wipe dead man's switch with configurable inactivity timer.
 ## Configuration
 
 Intervals: 7, 14, 30, or 60 days
-
-```swift
+swift
 // Timer stored in Keychain
 let lastCheckIn = ISO8601DateFormatter().string(from: Date())
 KeychainHelper.set(lastCheckIn, forKey: "lastCheckInTimestamp")
@@ -19,16 +18,16 @@ if let lastCheckInString = KeychainHelper.get("lastCheckInTimestamp"),
 		triggerWipe()
 	}
 }
-```
+
 
 ## Wipe Modes
 
-**Fast:** Standard file deletion (instant)  
-**Secure:** DoD 5220.22-M 3-pass overwrite (slower, forensically secure)
+**Fast:** Standard key crypto-shredding & file deletion (instant)  
+**Secure:** NIST 800-88 Single-Pass Overwrite before deletion (slower, more thorough)
 
 ## Scope
 
-Wipes Vault, Fade, Decoy photos and notes. Directories recreated empty.
+Wipes Vault, Fade, and Backup photos and notes. All master keys are destroyed and directories are recreated empty.
 
 ## Limitations
 

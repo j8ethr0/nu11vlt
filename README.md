@@ -7,10 +7,10 @@ Zero-knowledge photo and note vault for iOS with military-grade encryption.
 ## Features
 
 - **ChaCha20-Poly1305** encryption (256-bit keys)
-- **DoD 5220.22-M** secure deletion (3-pass overwrite)
+- **NIST SP 800-88** secure wipe (single-pass random overwrite)
 - **Skeleton Switch** auto-wipe after configurable inactivity
-- **Dual backup modes**: Portable (AES-256) or Secure Archive (double encryption)
-- **Decoy vault** with backup PIN
+- **Dual archive modes**: Portable (AES-256) or Secure (double encryption)
+- **Backup PIN** for duress/plausible deniability
 - Face ID/Touch ID + optional PIN authentication
 - Self-destructing "Fade" storage
 - Local-only storage (no cloud sync)
@@ -19,7 +19,7 @@ Zero-knowledge photo and note vault for iOS with military-grade encryption.
 
 ### Encryption Stack
 - On-device: ChaCha20-Poly1305 AEAD
-- Backup: AES-256-GCM with PBKDF2 (100k iterations)
+- Archive: AES-256-GCM with **Argon2id** key derivation
 - Keys: iOS Keychain (Secure Enclave)
 
 ### Threat Model
@@ -29,19 +29,19 @@ Zero-knowledge photo and note vault for iOS with military-grade encryption.
 ## Documentation
 
 - [ENCRYPTION.md](./ENCRYPTION.md) - Encryption implementation details
-- [DOD_WIPE.md](./DOD_WIPE.md) - Secure deletion process
+- [SECURE_WIPE.md](./SECURE_WIPE.md) - Secure wipe process
 - [SKELETON_SWITCH.md](./SKELETON_SWITCH.md) - Auto-wipe system
 
 ## Standards
 
 - ChaCha20-Poly1305: IETF RFC 8439
 - AES-256-GCM: NIST FIPS 197
-- PBKDF2: NIST SP 800-132
-- Secure Deletion: DoD 5220.22-M
+- Argon2id: RFC 9106
+- Secure Wipe: **NIST SP 800-88 Rev. 1**
 
 ## Requirements
 
-iOS 18.0+ | SwiftUI | SwiftData
+iOS 18.0+
 
 ## License
 
