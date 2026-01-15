@@ -50,11 +50,6 @@ See [THREAT_MODEL.md](./THREAT_MODEL.md) for detailed analysis.
 
 iOS 18.0+
 
-## Pricing
-
-- **Free:** 30 vault photos, 10 fade photos, 2 albums, 5 notes
-- **Pro:** $5.99/month or $69.99 lifetime (unlimited storage, all features)
-
 ## License
 
 Copyright © 2025-2026. All rights reserved.
