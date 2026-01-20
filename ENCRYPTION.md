@@ -66,19 +66,19 @@ ChaCha20 → AES-256-GCM (device key)
 
 ## File Format
 
-### .n11 (Photos)
+### .n11 [Photos[]
 
 [12-byte nonce][ciphertext][16-byte tag]
 
 ChaCha20-Poly1305 encrypted JPEG/PNG/HEIC data.
 
-### .n11note (Notes)
+### .n11note [Notes]
 
 [12-byte nonce][ciphertext][16-byte tag]
 
 ChaCha20-Poly1305 encrypted UTF-8 text.
 
-### .nu11vlt (Archives)
+### .nu11vlt [Archives] (Backups)
 
 ZIP Container:
 ├── manifest.json (encrypted)
@@ -98,7 +98,8 @@ Archive metadata and contents are AES-256-GCM encrypted.
 | PIN Hashing       | 2        | 64 MB    |
 | Archive Passwords | 3        | 256 MB   |
 
-Fast enough for real-time PIN verification, resistant to GPU cracking for PINs. Stronger protection (~1s derivation) for archive passwords.
+Fast enough for real-time PIN verification, resistant to GPU cracking for PINs. 
+Stronger protection (~1s derivation) for archive passwords.
 
 ---
 
