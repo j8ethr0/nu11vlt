@@ -16,6 +16,7 @@ Backup PIN allows a second, independent vault to be opened using a different PIN
 - Independent storage
 - Identical interface
 - No in-app indicators that multiple vaults exist
+- Which vault is currently active is itself tracked in protected Keychain storage, not a simple app setting — reducing the chance that crashing or force-quitting the app mid-session exposes the wrong vault on relaunch
 
 The application itself cannot cryptographically prove which vault is "real."
 

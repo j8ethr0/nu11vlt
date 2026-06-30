@@ -1,36 +1,22 @@
 # Skeleton Switch
 
-Auto-wipe dead man's switch with configurable inactivity timer.
+Auto-wipe dead man's switch with a configurable inactivity timer.
 
-## Configuration
+## How It Works
 
-Intervals: 7, 14, 30, or 60 days
-swift
-// Timer stored in Keychain
-let lastCheckIn = ISO8601DateFormatter().string(from: Date())
-KeychainHelper.set(lastCheckIn, forKey: "lastCheckInTimestamp")
-
-// Check on app launch
-if let lastCheckInString = KeychainHelper.get("lastCheckInTimestamp"),
-   let lastCheckIn = ISO8601DateFormatter().date(from: lastCheckInString) {
-	let elapsed = Date().timeIntervalSince(lastCheckIn)
-	if elapsed > configuredInterval {
-		triggerWipe()
-	}
-}
-
+Choose a check-in interval: 7, 14, 30, or 60 days. Every time you successfully unlock the app, your check-in timer resets. If the app isn't opened again before the interval elapses, the wipe runs automatically the next time it is launched.
 
 ## Wipe Modes
 
-**Fast:** Standard key crypto-shredding & file deletion (instant)  
-**Secure:** NIST 800-88 Single-Pass Overwrite before deletion (slower, more thorough)
+**Fast:** Standard key crypto-shredding & file deletion (near-instant)
+**Secure:** Adds a supplementary overwrite pass before deletion (slower, more thorough — see [SECURE_WIPE.md](./SECURE_WIPE.md))
 
 ## Scope
 
-Wipes Vault, Fade, and Backup photos and notes. All master keys are destroyed and directories are recreated empty.
+Wipes Vault, Fade, and Backup photos and notes. All encryption keys are destroyed and storage is recreated empty.
 
 ## Limitations
 
-- Triggers on next app launch (not instant)
-- Survives app updates, not deletion/reinstall
-- Cannot be bypassed by changing system clock
+- Triggers on next app launch, not instantly while the device is being held
+- Survives app updates, not app deletion/reinstall
+- Relies on the device's system clock — this is a convenience feature for opportunistic protection, not a hardened anti-tamper mechanism against a sophisticated adversary with extended device access

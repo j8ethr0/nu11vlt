@@ -30,6 +30,24 @@ FaceID uses the Secure Enclave. It improves convenience but can be coerced. High
 
 ---
 
+## Does the app remove GPS location data from my photos?
+
+The in-app photo viewer never displays GPS coordinates — only camera details like make, model, ISO, and shutter speed. GPS data is **not** stripped from the original photo file itself, though; it's stored, encrypted, exactly as imported. If you need to guarantee a photo carries no location data at all, remove it before importing — the iOS Photos app supports this via "Remove Location" in its share sheet.
+
+---
+
+## What's inside an encrypted archive — can someone tell what I backed up without the password?
+
+No. Archive exports are "sealed": the entire internal listing — file names, note titles, item counts, and dates — is encrypted, not just the photos and notes themselves. Without the correct password, an archive file reveals nothing about its contents. See [ARCHIVES.md](./ARCHIVES.md).
+
+---
+
+## What's the difference between Secure and Portable archive exports?
+
+**Secure** archives stay tied to the device that created them — useful as an encrypted local backup. **Portable** archives can be restored on any device with the password — useful for moving to a new phone. Both get the same encrypted, sealed index; the difference is only in whether the content is also bound to your original device's key. See [ARCHIVES.md](./ARCHIVES.md).
+
+---
+
 ## User Recommendations
 
 - Keep iOS updated

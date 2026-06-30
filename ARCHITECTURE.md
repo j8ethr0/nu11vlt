@@ -11,7 +11,7 @@
             ▼
    [ChaCha20-Poly1305 Encryption]
             │
-            ├─> 256-bit Key (Secure Enclave)
+            ├─> 256-bit Key (iOS Keychain)
             │
             ▼
     ENCRYPTED FILE (.n11)
@@ -34,16 +34,16 @@
 ### Photo Import
 
 ```text
-Camera/Photos → UIImage → Data → ChaCha20 Encrypt → .n11 File → Documents Directory
-                                      ↑
-                                      │
-                              SymmetricKey (Keychain)
+Camera/Photos → Image Data → ChaCha20 Encrypt → .n11 File → On-device storage
+                                    ↑
+                                    │
+                            SymmetricKey (Keychain)
 ```
 
 ### Photo Viewing
 
 ```text
-.n11 File → ChaCha20 Decrypt → Data → UIImage → Display
+.n11 File → ChaCha20 Decrypt → Image Data → Display
                   ↑
                   │
           SymmetricKey (Keychain)
@@ -53,44 +53,31 @@ Camera/Photos → UIImage → Data → ChaCha20 Encrypt → .n11 File → Docume
 
 ```text
 [Standard Mode]
-.n11 File → Keychain.delete(key) → FileManager.removeItem()
+.n11 File → Destroy encryption key → Delete file
             (crypto-shredding)
 
 [Secure Mode - Pro]
-.n11 File → Random Overwrite → Keychain.delete(key) → FileManager.removeItem()
-            (NIST 800-88)
+.n11 File → Random overwrite → Destroy encryption key → Delete file
+            (supplementary obfuscation pass)
 ```
 
 ---
 
 ## Storage Structure
 
-```text
-Documents/
-├── Vault/
-│   ├── Albums/
-│   │   └── {AlbumID}/
-│   │       └── {PhotoID}.n11
-│   └── Photos/
-│       └── {PhotoID}.n11
-├── Fade/
-│   └── {PhotoID}.n11
-├── Backup/
-│   └── {PhotoID}.n11
-└── Notes/
-    ├── vault_{NoteID}.n11note
-    └── fade_{NoteID}.n11note
-```
+Each vault context (Vault, Fade, Backup) has its own storage area on-device, encrypted independently with its own key. Album membership and note metadata are tracked locally and resolved at read time — they are not exposed in plaintext file or folder names.
 
 ---
 
 ## Key Management
 
-| Key          | Purpose                           | Storage                                                       | Lifecycle                                          |
-| ------------ | --------------------------------- | ------------------------------------------------------------- | -------------------------------------------------- |
-| Vault        | Encrypts permanent photos & notes | iOS Keychain (`kSecAttrAccessibleWhenUnlockedThisDeviceOnly`) | Created on first launch, destroyed on app deletion |
-| Fade         | Encrypts self-destructing content | iOS Keychain                                                  | Separate from Vault Key                            |
-| Backup (Pro) | Encrypts alternative vault        | iOS Keychain                                                  | Created when Backup PIN is set                     |
+| Key          | Purpose                           | Storage                                                     | Lifecycle                                          |
+| ------------ | ---------------------------------- | ------------------------------------------------------------ | --------------------------------------------------- |
+| Vault        | Encrypts permanent photos & notes | iOS Keychain, accessible only on this device while unlocked | Created on first launch, destroyed on app deletion |
+| Fade         | Encrypts self-destructing content | iOS Keychain, accessible only on this device while unlocked | Independent from the Vault key                     |
+| Backup (Pro) | Encrypts the alternative vault    | iOS Keychain, accessible only on this device while unlocked | Created when a Backup PIN is set                   |
+
+Keys never sync via iCloud Keychain and never migrate off the device — even a full device backup cannot extract them. See [ENCRYPTION.md](./ENCRYPTION.md) for how key storage is hardware-protected.
 
 ---
 
@@ -99,14 +86,16 @@ Documents/
 ```text
 App Launch
     ↓
-[Face ID Enabled?]
-    ├─ Yes → Face ID Challenge
+[FaceID Enabled?]
+    ├─ Yes → FaceID Challenge
     │         ├─ Success → Unlock
     │         └─ Fail → PIN Prompt
     └─ No → PIN Prompt
               ├─ Primary PIN → Load Vault Key
               └─ Backup PIN → Load Backup Key
 ```
+
+A successful unlock requires the *full* chain to complete (FaceID and PIN, if both are configured) before the app is considered authenticated — a partial success (e.g. FaceID alone, with PIN still pending) does not unlock the vault.
 
 ---
 
@@ -115,58 +104,58 @@ App Launch
 ```text
 App Launch
     ↓
-Check Last Check-In Timestamp (Keychain)
+Check time since last successful check-in
     ↓
-[Exceeded Interval?]
-    ├─ No → Update Timestamp → Continue
-    └─ Yes → Trigger Wipe
+[Exceeded configured interval?]
+    ├─ No → Reset check-in timer → Continue
+    └─ Yes → Trigger wipe
               ↓
          [Secure Mode?]
-              ├─ Yes → NIST 800-88 Overwrite → Delete Keys → Delete Files
-              └─ No → Delete Keys → Delete Files
+              ├─ Yes → Overwrite → Destroy keys → Delete files
+              └─ No → Destroy keys → Delete files
 ```
+
+See [SKELETON_SWITCH.md](./SKELETON_SWITCH.md) for details and limitations.
 
 ---
 
 ## Archive Export
 
-### Portable Archive
+Nu11VLT supports encrypted archive export/import for backup and device migration, including a fully encrypted (“sealed”) archive index. See [ARCHIVES.md](./ARCHIVES.md) for the full breakdown.
 
-```text
-Vault Photos → ChaCha20 Decrypt → AES-256 Encrypt (Password-Derived Key) → .nu11vlt ZIP
-                    ↑                           ↑
-              Vault Key (Keychain)      Argon2id(password, salt)
-```
+---
 
-### Secure Archive
+## Audit Trail
 
-```text
-Vault Photos → Keep ChaCha20 Encrypted → AES-256 Encrypt (Device Key) → .nu11vlt ZIP
-                         ↑                              ↑
-                   Vault Key                    Archive Key (Keychain)
-```
+Nu11VLT keeps a local security event log: authentication attempts, vault unlocks, content changes, archive exports/imports, Skeleton Switch activity, and screenshot detections are all timestamped and recorded for your own review.
+
+- Stored only within the app's local data — never transmitted anywhere, there's nothing to transmit it to
+- Filterable by category and severity within the app
+- Configurable retention period
+- Exportable to plain text or CSV for your own records
 
 ---
 
 ## Network Isolation
 
-Nu11VLT has **zero network code**. All encryption, storage, and processing happens on-device.
+Nu11VLT has **zero network code** for any vault functionality. All encryption, storage, and processing happens on-device.
 
 ```text
-Info.plist:
-  - No NSAppTransportSecurity key
-  - No network entitlements
-  - iCloud backup excluded for Documents directory
+- No outbound network requests anywhere in the app
+- No analytics, telemetry, or crash-reporting SDKs
+- Vault, Fade, Backup, and thumbnail-cache directories excluded from iCloud/device backup
 ```
+
+A network-status indicator is shown to the user purely as an informational signal — it does not mean the app is using the network.
 
 ---
 
 ## Performance Considerations
 
-* **Thumbnail Caching:** Decrypted thumbnails cached in memory (LRU eviction)
-* **Lazy Decryption:** Photos only decrypted when viewed
-* **Background Fade Deletion:** Timer-based cleanup runs on app launch
-* **Secure Wipe:** Optional Pro feature (slower, more thorough)
+* **Thumbnail Caching:** Two-tier cache — decrypted thumbnails held briefly in memory for scroll performance, plus a persistent on-device cache encrypted with the vault key and excluded from backup. See [ENCRYPTION.md](./ENCRYPTION.md).
+* **Lazy Decryption:** Photos and notes are only decrypted when viewed.
+* **Background Fade Deletion:** Expired Fade content is cleaned up automatically, both on a timer while the app is open and on launch.
+* **Secure Wipe:** Optional Pro feature (slower, more thorough than standard deletion).
 
 ---
 
@@ -174,14 +163,15 @@ Info.plist:
 
 **Protected:**
 
-* Data at rest (encrypted with ChaCha20)
-* Keys in Secure Enclave (hardware-backed)
-* Forensic recovery (crypto-shredding + optional overwrite)
+* Data at rest (encrypted with ChaCha20-Poly1305)
+* Cached thumbnails (also encrypted at rest)
+* Encryption keys (hardware-protected, device-bound, never synced)
+* Forensic recovery after deletion (crypto-shredding + optional overwrite)
 
 **Not Protected:**
 
-* Data in RAM while app is unlocked
-* Screenshots while app is active (mitigated with blur overlay)
+* Data in memory while the vault is unlocked
+* Screenshots while the app is active (detected and logged, not prevented; app-switcher preview is blurred)
 * Compromised iOS (zero-day exploits)
 * Jailbroken devices
 

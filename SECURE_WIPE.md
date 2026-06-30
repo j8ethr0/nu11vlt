@@ -1,17 +1,17 @@
-# Secure Wipe (NIST 800-88)
+# Secure Wipe
 
-Optional single-pass overwrite to sanitize data before deletion.
+Crypto-shredding is the primary, always-on mechanism Nu11VLT uses to destroy data. An optional single-pass overwrite adds a further layer of obfuscation on top.
 
 ## Primary Mechanism: Crypto-Shredding
 
-Nu11VLT's primary method for data destruction is **crypto-shredding**. When content is deleted, the unique 256-bit `ChaCha20` key used to encrypt it is irrevocably destroyed from the Keychain.
+Nu11VLT's primary method for data destruction is **crypto-shredding**. When content is deleted, the unique 256-bit ChaCha20 key used to encrypt it is irrevocably destroyed from the Keychain.
 
-On modern SSDs, this is the industry-standard method for secure data erasure. Without the key, the encrypted data is rendered useless ciphertext, making forensic recovery computationally infeasible.
+Without the key, the encrypted data left behind is permanently unreadable ciphertext — recovering the original content is computationally infeasible, regardless of what remains on the physical storage. This is the data-destruction approach **NIST SP 800-88 Rev. 1** recommends for flash-based storage (the type used in iPhones), since a logical-level overwrite isn't guaranteed to reach every physical location a deleted file's data once occupied, due to wear-leveling on flash storage controllers.
 
 ## Optional Sanitization (Pro Feature)
 
-For users who require an additional layer of forensic noise, Nu11VLT provides an optional **Secure Wipe** feature.
+For users who want an additional layer of forensic noise on top of crypto-shredding, Nu11VLT provides an optional **Secure Wipe** feature.
 
-- **Standard:** Aligns with **NIST SP 800-88 Rev. 1** guidelines for media sanitization.
-- **Process:** Performs a single pass of cryptographically secure random data across a file's logical address before it is deleted.
-- **Use Case:** This adds a final layer of obfuscation, overwriting the ciphertext itself before the file is unlinked.
+- **Process:** Performs a single pass of cryptographically secure random data over a file's storage location before it is deleted.
+- **Use case:** Overwrites the ciphertext itself before the file is unlinked, as a supplementary precaution beyond crypto-shredding.
+- **Note:** On flash storage, an overwrite pass is not independently verifiable the way crypto-shredding is — treat it as extra obfuscation, not a separate guarantee.

@@ -27,9 +27,9 @@ It is **not** designed to defeat operating-system compromise, nation-state zero-
 
 **Protections:**
 - All data encrypted at rest using modern AEAD encryption
-- Hardware-backed key storage (iOS Secure Enclave)
-- No plaintext thumbnails or metadata
-- App data excluded from cloud backup
+- Encryption keys in the iOS Keychain, hardware-protected via Secure Enclave-rooted Data Protection
+- Cached thumbnails encrypted at rest, not just full-resolution content
+- Vault data excluded from cloud and device backup
 
 **Result:** Without successful authentication, stored data is computationally infeasible to recover.
 
@@ -53,10 +53,10 @@ It is **not** designed to defeat operating-system compromise, nation-state zero-
 **Scenario:** Investigator attempts to recover deleted photos using forensic tools.
 
 **Protections:**
-- Crypto-shredding through encryption-key destruction
-- Optional secure overwrite before deletion (Pro)
+- Crypto-shredding through encryption-key destruction — the primary mechanism, aligned with NIST SP 800-88 Rev. 1 guidance for flash storage
+- Optional supplementary overwrite pass before deletion (Pro)
 
-**Result:** Deleted content remains encrypted noise even if raw storage blocks are recovered.
+**Result:** Deleted content remains encrypted noise even if raw storage blocks are recovered. See [SECURE_WIPE.md](./SECURE_WIPE.md) for why crypto-shredding, not overwrite, is the primary guarantee.
 
 ---
 
@@ -90,9 +90,9 @@ It is **not** designed to defeat operating-system compromise, nation-state zero-
 **Scenario:** Attacker extracts app storage and attempts to crack PINs or archives.
 
 **Protections:**
-- Memory-hard password hashing
-- Secure Enclave-protected keys
-- iOS rate limiting
+- Memory-hard password hashing (Argon2id)
+- Keys hardware-protected via the Secure Enclave-rooted Data Protection key hierarchy
+- Rate limiting with escalating lockout on repeated failed PIN attempts
 
 **Result:** Offline cracking becomes computationally expensive and impractical at scale.
 
