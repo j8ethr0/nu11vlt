@@ -8,7 +8,7 @@ Nu11VLT's primary method for data destruction is **crypto-shredding**. When cont
 
 Without the key, the encrypted data left behind is permanently unreadable ciphertext — recovering the original content is computationally infeasible, regardless of what remains on the physical storage. This is the data-destruction approach **NIST SP 800-88 Rev. 1** recommends for flash-based storage (the type used in iPhones), since a logical-level overwrite isn't guaranteed to reach every physical location a deleted file's data once occupied, due to wear-leveling on flash storage controllers.
 
-## Optional Sanitization (Pro Feature)
+## Optional Sanitization
 
 For users who want an additional layer of forensic noise on top of crypto-shredding, Nu11VLT provides an optional **Secure Wipe** feature.
 

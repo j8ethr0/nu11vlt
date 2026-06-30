@@ -56,7 +56,7 @@ Camera/Photos → Image Data → ChaCha20 Encrypt → .n11 File → On-device st
 .n11 File → Destroy encryption key → Delete file
             (crypto-shredding)
 
-[Secure Mode - Pro]
+[Secure Mode]
 .n11 File → Random overwrite → Destroy encryption key → Delete file
             (supplementary obfuscation pass)
 ```
@@ -75,7 +75,7 @@ Each vault context (Vault, Fade, Backup) has its own storage area on-device, enc
 | ------------ | ---------------------------------- | ------------------------------------------------------------ | --------------------------------------------------- |
 | Vault        | Encrypts permanent photos & notes | iOS Keychain, accessible only on this device while unlocked | Created on first launch, destroyed on app deletion |
 | Fade         | Encrypts self-destructing content | iOS Keychain, accessible only on this device while unlocked | Independent from the Vault key                     |
-| Backup (Pro) | Encrypts the alternative vault    | iOS Keychain, accessible only on this device while unlocked | Created when a Backup PIN is set                   |
+| Backup       | Encrypts the alternative vault    | iOS Keychain, accessible only on this device while unlocked | Created when a Backup PIN is set                   |
 
 Keys never sync via iCloud Keychain and never migrate off the device — even a full device backup cannot extract them. See [ENCRYPTION.md](./ENCRYPTION.md) for how key storage is hardware-protected.
 
@@ -155,7 +155,7 @@ A network-status indicator is shown to the user purely as an informational signa
 * **Thumbnail Caching:** Two-tier cache — decrypted thumbnails held briefly in memory for scroll performance, plus a persistent on-device cache encrypted with the vault key and excluded from backup. See [ENCRYPTION.md](./ENCRYPTION.md).
 * **Lazy Decryption:** Photos and notes are only decrypted when viewed.
 * **Background Fade Deletion:** Expired Fade content is cleaned up automatically, both on a timer while the app is open and on launch.
-* **Secure Wipe:** Optional Pro feature (slower, more thorough than standard deletion).
+* **Secure Wipe:** Optional, user-enabled (slower, more thorough than standard deletion).
 
 ---
 

@@ -54,7 +54,7 @@ It is **not** designed to defeat operating-system compromise, nation-state zero-
 
 **Protections:**
 - Crypto-shredding through encryption-key destruction — the primary mechanism, aligned with NIST SP 800-88 Rev. 1 guidance for flash storage
-- Optional supplementary overwrite pass before deletion (Pro)
+- Optional supplementary overwrite pass before deletion
 
 **Result:** Deleted content remains encrypted noise even if raw storage blocks are recovered. See [SECURE_WIPE.md](./SECURE_WIPE.md) for why crypto-shredding, not overwrite, is the primary guarantee.
 
